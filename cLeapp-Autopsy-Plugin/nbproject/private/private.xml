@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/D:/GitHub/cLeapp-Autopsy-Plugin/build.xml</file>
+            <file>file:/D:/GitHub/cLeapp-Autopsy-Plugin/src/org/sleuthkit/autopsy/modules/cleappanalyzer/Bundle.properties</file>
+            <file>file:/D:/GitHub/cLeapp-Autopsy-Plugin/src/org/sleuthkit/autopsy/modules/cleappanalyzer/LeappFileProcessor.java</file>
+            <file>file:/D:/GitHub/cLeapp-Autopsy-Plugin/src/org/sleuthkit/autopsy/modules/cleappanalyzer/CLeappAnalyzerIngestModule.java</file>
+            <file>file:/D:/GitHub/cLeapp-Autopsy-Plugin/src/org/sleuthkit/autopsy/modules/cleappanalyzer/CLeappAnalyzerModuleFactory.java</file>
+            <file>file:/D:/GitHub/cLeapp-Autopsy-Plugin/src/org/sleuthkit/autopsy/modules/cleappanalyzer/cleap-artifact-attribute-reference.xml</file>
+            <file>file:/D:/GitHub/cLeapp-Autopsy-Plugin/nbproject/project.xml</file>
+        </group>
+    </open-files>
+</project-private>
