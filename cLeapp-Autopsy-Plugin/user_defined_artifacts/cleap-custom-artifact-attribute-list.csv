@@ -1,0 +1,3 @@
+type,name,description,data type
+artifact,TSK_SHELL_COMMAND,Shell Commands Executed
+attribute,TSK_COMMAND_EXECUTED,Command Executed,String
