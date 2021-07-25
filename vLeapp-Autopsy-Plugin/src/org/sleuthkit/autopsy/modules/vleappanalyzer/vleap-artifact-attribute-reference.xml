@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <!---
+    This file contains the parameters for how to map aLeapp plugin output to attributes inside Autopsy for the aleapp Analyser module.
+
+    Each FileName node corresponds to a tab seperated values (tsv) file that is produced from iLeapp.
+
+    A FileName will have an associated TSK artifact assigned to it.
+
+    Each TSK artifact may have multiple attributes that correspond to the columns of the output from the iLeapp program tsv file.
+
+
+    FileName:
+        filename:           The aLeapp TSV file that you want to process. 
+        description:        A description of the tsv file name, this is defined in the iLeapp plugin for each tsv file.
+        
+    ArtifactName:
+        artifactname:       The artifact that is to be created for the data in the tsv file.
+        comment:            This will be the data that will be added to the TSK_COMMENT attribute for each artifact.  If the artifact 
+                            does not need/require a comment then make the value null, a null comment will be ignored.
+                            
+    AttributeName:
+        attributeName:      The TSK attribute that the data corresponds to in the TSV file.  If the data has no corresponding TSK attribute then
+                            make the value null, this will make sure the data in this column is ignored.
+        columnName:         This is the column name that is defined in the tsv file and what the attributeName corresponds to.
+        required:           whether the attribute is required or not (yes or no)
+
+
+    -->
+    <cLeap_Files_To_Process>
+
+        <FileName filename="Dev Loc Results.tsv" description="Dev Loc Results">
+            <ArtifactName artifactname="TSK_GPS_TRACKPOINT" comment="Dev Loc Results">
+                <AttributeName attributename="TSK_DATETIME" columnName="Timestamp" required="yes" />
+                <AttributeName attributename="TSK_GEO_LATITUDE" columnName="Latitude" required="yes" />
+                <AttributeName attributename="TSK_GEO_LONGITUDE" columnName="Longitude" required="yes" />
+                <AttributeName attributename="TSK_GEO_ALTITUDE" columnName="Altitude Ft" required="yes" />
+                <AttributeName attributename="null" columnName="Heading" required="No" />
+                <AttributeName attributename="TSK_NAME" columnName="Category" required="yes" />
+                <AttributeName attributename="null" columnName="Subcategory" required="No" />
+                <AttributeName attributename="TSK_TEXT_FILE" columnName="Log Filename" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Odometer.tsv" description="Odometer">
+            <ArtifactName artifactname="VLEAPP_ODOMETER" comment="Odometer">
+                <AttributeName attributename="TSK_DATETIME" columnName="Timestamp" required="yes" />
+                <AttributeName attributename="VLEAPP_ODOMETER" columnName="Odometer" required="yes" />
+                <AttributeName attributename="TSK_TEXT_FILE" columnName="Log Filename" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Vehicle Speed.tsv" description="Vehicle Speed">
+            <ArtifactName artifactname="VLEAPP_VEHICLE_SPEED" comment="Vehicle Speed">
+                <AttributeName attributename="TSK_DATETIME" columnName="Timestamp" required="yes" />
+                <AttributeName attributename="VLEAPP_SPEED" columnName="Vehicle Speed" required="yes" />
+                <AttributeName attributename="TSK_TEXT_FILE" columnName="Log Filename" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Transmission Status.tsv" description="Transmission Status">
+            <ArtifactName artifactname="VLEAPP_TRANSMISSION" comment="Transmission Status">
+                <AttributeName attributename="TSK_DATETIME" columnName="Timestamp" required="yes" />
+                <AttributeName attributename="VLEAPP_TRANSMISSION_STATUS" columnName="Transmission Status" required="yes" />
+                <AttributeName attributename="TSK_TEXT_FILE" columnName="Log Filename" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Outside Temperature.tsv" description="Outside Temperature">
+            <ArtifactName artifactname="VLEAPP_OUTSIDE_TEMPERATURE" comment="Outside Temperature">
+                <AttributeName attributename="TSK_DATETIME" columnName="Timestamp" required="yes" />
+                <AttributeName attributename="VLEAPP_TEMPERATURE" columnName="Temperature" required="yes" />
+                <AttributeName attributename="TSK_TEXT_FILE" columnName="Log Filename" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Road Speed Limits.tsv" description="Road Speed Limits">
+            <ArtifactName artifactname="VLEAPP_ROAD_SPEED_LIMITS" comment="Road Speed Limits">
+                <AttributeName attributename="TSK_DATETIME" columnName="Timestamp" required="yes" />
+                <AttributeName attributename="VLEAPP_ROAD" columnName="Road" required="yes" />
+                <AttributeName attributename="VLEAPP_SPEED_LIMIT" columnName="Speed Limit" required="yes" />
+                <AttributeName attributename="TSK_TEXT_FILE" columnName="Log Filename" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Access Point List.tsv" description="Access Point List">
+            <ArtifactName artifactname="TSK_WIFI_NETWORK" comment="Access Point List">
+                <AttributeName attributename="TSK_DATETIME" columnName="Timestamp" required="yes" />
+                <AttributeName attributename="TSK_DEVICE_ID" columnName="BSSID" required="yes" />
+                <AttributeName attributename="TSK_SSID" columnName="SSID" required="yes" />
+                <AttributeName attributename="VLEAPP_SIGNAL_STRENGTH" columnName="Signal Strength" required="No" />
+                <AttributeName attributename="TSK_TEXT_FILE" columnName="Log Filename" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Phone1000.sqlite Contacts.tsv" description="Phone1000.sqlite Contacts">
+            <ArtifactName artifactname="TSK_CONTACT" comment="Phone1000.sqlite Contacts">
+                <AttributeName attributename="VLEAPP_FIRST_NAME" columnName="First Name" required="yes" />
+                <AttributeName attributename="VLEAPP_LAST_NAME" columnName="Last Name" required="yes" />
+                <AttributeName attributename="TSK_PHONE_NUMBER" columnName="Phone Number" required="yes" />
+                <AttributeName attributename="TSK_ACCOUNT_TYPE" columnName="Signal Strength" required="No" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Phone1001.sqlite Contacts.tsv" description="Phone1001.sqlite Contacts">
+            <ArtifactName artifactname="TSK_CONTACT" comment="Phone1001.sqlite Contacts">
+                <AttributeName attributename="VLEAPP_FIRST_NAME" columnName="First Name" required="yes" />
+                <AttributeName attributename="VLEAPP_LAST_NAME" columnName="Last Name" required="yes" />
+                <AttributeName attributename="TSK_PHONE_NUMBER" columnName="Phone Number" required="yes" />
+                <AttributeName attributename="TSK_ACCOUNT_TYPE" columnName="Signal Strength" required="No" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Phone1002.sqlite Contacts.tsv" description="Phone1002.sqlite Contacts">
+            <ArtifactName artifactname="TSK_CONTACT" comment="Phone1002.sqlite Contacts">
+                <AttributeName attributename="VLEAPP_FIRST_NAME" columnName="First Name" required="yes" />
+                <AttributeName attributename="VLEAPP_LAST_NAME" columnName="Last Name" required="yes" />
+                <AttributeName attributename="TSK_PHONE_NUMBER" columnName="Phone Number" required="yes" />
+                <AttributeName attributename="TSK_ACCOUNT_TYPE" columnName="Signal Strength" required="No" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Phone1003.sqlite Contacts.tsv" description="Phone1003.sqlite Contacts">
+            <ArtifactName artifactname="TSK_CONTACT" comment="Phone1003.sqlite Contacts">
+                <AttributeName attributename="VLEAPP_FIRST_NAME" columnName="First Name" required="yes" />
+                <AttributeName attributename="VLEAPP_LAST_NAME" columnName="Last Name" required="yes" />
+                <AttributeName attributename="TSK_PHONE_NUMBER" columnName="Phone Number" required="yes" />
+                <AttributeName attributename="TSK_ACCOUNT_TYPE" columnName="Signal Strength" required="No" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Phone1004.sqlite Contacts.tsv" description="Phone1004.sqlite Contacts">
+            <ArtifactName artifactname="TSK_CONTACT" comment="Phone1004.sqlite Contacts">
+                <AttributeName attributename="VLEAPP_FIRST_NAME" columnName="First Name" required="yes" />
+                <AttributeName attributename="VLEAPP_LAST_NAME" columnName="Last Name" required="yes" />
+                <AttributeName attributename="TSK_PHONE_NUMBER" columnName="Phone Number" required="yes" />
+                <AttributeName attributename="TSK_ACCOUNT_TYPE" columnName="Signal Strength" required="No" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Phone1005.sqlite Contacts.tsv" description="Phone1005.sqlite Contacts">
+            <ArtifactName artifactname="TSK_CONTACT" comment="Phone1006.sqlite Contacts">
+                <AttributeName attributename="VLEAPP_FIRST_NAME" columnName="First Name" required="yes" />
+                <AttributeName attributename="VLEAPP_LAST_NAME" columnName="Last Name" required="yes" />
+                <AttributeName attributename="TSK_PHONE_NUMBER" columnName="Phone Number" required="yes" />
+                <AttributeName attributename="TSK_ACCOUNT_TYPE" columnName="Signal Strength" required="No" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Phone1006.sqlite Contacts.tsv" description="Phone1006.sqlite Contacts">
+            <ArtifactName artifactname="TSK_CONTACT" comment="Phone1006.sqlite Contacts">
+                <AttributeName attributename="VLEAPP_FIRST_NAME" columnName="First Name" required="yes" />
+                <AttributeName attributename="VLEAPP_LAST_NAME" columnName="Last Name" required="yes" />
+                <AttributeName attributename="TSK_PHONE_NUMBER" columnName="Phone Number" required="yes" />
+                <AttributeName attributename="TSK_ACCOUNT_TYPE" columnName="Signal Strength" required="No" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Phone1007.sqlite Contacts.tsv" description="Phone1007.sqlite Contacts">
+            <ArtifactName artifactname="TSK_CONTACT" comment="Phone1007.sqlite Contacts">
+                <AttributeName attributename="VLEAPP_FIRST_NAME" columnName="First Name" required="yes" />
+                <AttributeName attributename="VLEAPP_LAST_NAME" columnName="Last Name" required="yes" />
+                <AttributeName attributename="TSK_PHONE_NUMBER" columnName="Phone Number" required="yes" />
+                <AttributeName attributename="TSK_ACCOUNT_TYPE" columnName="Signal Strength" required="No" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Phone1008.sqlite Contacts.tsv" description="Phone1008.sqlite Contacts">
+            <ArtifactName artifactname="TSK_CONTACT" comment="Phone1008.sqlite Contacts">
+                <AttributeName attributename="VLEAPP_FIRST_NAME" columnName="First Name" required="yes" />
+                <AttributeName attributename="VLEAPP_LAST_NAME" columnName="Last Name" required="yes" />
+                <AttributeName attributename="TSK_PHONE_NUMBER" columnName="Phone Number" required="yes" />
+                <AttributeName attributename="TSK_ACCOUNT_TYPE" columnName="Signal Strength" required="No" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Phone1009.sqlite Contacts.tsv" description="Phone1009.sqlite Contacts">
+            <ArtifactName artifactname="TSK_CONTACT" comment="Phone1009.sqlite Contacts">
+                <AttributeName attributename="VLEAPP_FIRST_NAME" columnName="First Name" required="yes" />
+                <AttributeName attributename="VLEAPP_LAST_NAME" columnName="Last Name" required="yes" />
+                <AttributeName attributename="TSK_PHONE_NUMBER" columnName="Phone Number" required="yes" />
+                <AttributeName attributename="TSK_ACCOUNT_TYPE" columnName="Signal Strength" required="No" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Phone1010.sqlite Contacts.tsv" description="Phone1010.sqlite Contacts">
+            <ArtifactName artifactname="TSK_CONTACT" comment="Phone1010.sqlite Contacts">
+                <AttributeName attributename="VLEAPP_FIRST_NAME" columnName="First Name" required="yes" />
+                <AttributeName attributename="VLEAPP_LAST_NAME" columnName="Last Name" required="yes" />
+                <AttributeName attributename="TSK_PHONE_NUMBER" columnName="Phone Number" required="yes" />
+                <AttributeName attributename="TSK_ACCOUNT_TYPE" columnName="Signal Strength" required="No" />
+            </ArtifactName>
+        </FileName>
+
+</cLeap_Files_To_Process>
