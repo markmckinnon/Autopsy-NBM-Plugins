@@ -156,11 +156,7 @@ public class VLeappAnalyzerIngestModule implements DataSourceIngestModule {
 
         List<AbstractFile> vLeappFilesToProcess = new ArrayList<>();
 
-        if (!(context.getDataSource() instanceof LocalFilesDataSource)) {
-            extractFilesFromImage(dataSource, vLeappPathsToProcess, tempOutputPath);
-            statusHelper.switchToDeterminate(vLeappFilesToProcess.size());
-            processVLeappFs(dataSource, currentCase, statusHelper, tempOutputPath.toString());
-        } else {
+        if (context.getDataSource() instanceof LocalFilesDataSource && !(context.getDataSource().getName().contentEquals("QNX6-Image-File")) ) {
             vLeappFilesToProcess = LeappFileProcessor.findLeappFilesToProcess(dataSource);
             statusHelper.switchToDeterminate(vLeappFilesToProcess.size());
 
@@ -169,11 +165,15 @@ public class VLeappAnalyzerIngestModule implements DataSourceIngestModule {
                 processVLeappFile(dataSource, currentCase, statusHelper, filesProcessedCount, vLeappFile);
                 filesProcessedCount++;
             }
+       } else {
             // Process the logical image as a fs in vLeapp to make sure this is not a logical fs that was added
             extractFilesFromImage(dataSource, vLeappPathsToProcess, tempOutputPath);
             processVLeappFs(dataSource, currentCase, statusHelper, tempOutputPath.toString());
+            extractFilesFromImage(dataSource, vLeappPathsToProcess, tempOutputPath);
+            statusHelper.switchToDeterminate(vLeappFilesToProcess.size());
+            processVLeappFs(dataSource, currentCase, statusHelper, tempOutputPath.toString());
         }
-
+       
         IngestMessage message = IngestMessage.createMessage(IngestMessage.MessageType.DATA,
                 Bundle.VLeappAnalyzerIngestModule_has_run(),
                 Bundle.VLeappAnalyzerIngestModule_completed());

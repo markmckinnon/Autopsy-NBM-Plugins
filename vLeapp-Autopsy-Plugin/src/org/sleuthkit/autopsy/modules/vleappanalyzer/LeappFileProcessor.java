@@ -161,6 +161,7 @@ public final class LeappFileProcessor {
             .put("VLEAPP_ROAD_SPEED_LIMITS", "Road Speed Limits")
             .put("VLEAPP_TRANSMISSION", "Transmission Status")
             .put("VLEAPP_OUTSIDE_TEMPERATURE", "Outside Temperature")
+            .put("VLEAPP_VEHICLE_INFO", "Vehicle Info")
             .build();
 
     private static final Map<String, String> CUSTOM_ATTRIBUTE_STRING_MAP = ImmutableMap.<String, String>builder()

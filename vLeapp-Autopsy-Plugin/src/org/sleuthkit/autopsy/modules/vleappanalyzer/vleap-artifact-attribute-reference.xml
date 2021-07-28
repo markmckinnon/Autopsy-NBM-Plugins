@@ -65,6 +65,13 @@
             </ArtifactName>
         </FileName>
 
+        <FileName filename="Vehicle Info.tsv" description="Vehicle Info">
+            <ArtifactName artifactname="VLEAPP_VEHICLE_INFO" comment="Vehicle Info">
+                <AttributeName attributename="TSK_KEY" columnName="Key" required="yes" />
+                <AttributeName attributename="TSK_VALUE" columnName="Value" required="yes" />
+            </ArtifactName>
+        </FileName>
+
         <FileName filename="Outside Temperature.tsv" description="Outside Temperature">
             <ArtifactName artifactname="VLEAPP_OUTSIDE_TEMPERATURE" comment="Outside Temperature">
                 <AttributeName attributename="TSK_DATETIME" columnName="Timestamp" required="yes" />
