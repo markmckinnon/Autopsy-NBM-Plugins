@@ -1,0 +1,30 @@
+type,name,description,data type
+artifact,TSK_SHELL_COMMAND,Shell Commands Executed,
+attribute,TSK_COMMAND_EXECUTED,Command Executed,String
+artifact,RLEAPP_COINBASE_TRANSACTIONS,Coinbase Transactions,
+attribute,RELAPP_COINBASE_ACCOUNT_NAME,Account Name,String
+attribute,RELAPP_COINBASE_AMOUNT,Amount,Double
+attribute,RELAPP_COINBASE_BALANCE,Balance,Double
+attribute,RLEAPP_COINBASE_ID,Coinbase Id,String
+attribute,RLEAPP_COINBASE_CRYPTO_HASH,Crypto Hash,String
+attribute,RLEAPP_COINBASE_CURRENCY,Currency,String
+attribute ,RLEAPP_COINBASE_INSTANTLY_EXCHANGED,Instantly Exchanged,String
+attribute,RLEAPP_COINBASE_NOTES,Notes,String
+attribute,RLEAPP_COINBASE_TO,To,String
+attribute,RLEAPP_COINBASE_TRANSFER_ID,Transfer Id,String
+attribute,RLEAPP_COINBASE_TRANSFER_PAYMENT_METHOD,Transfer Payment Method,String
+artifact,RLEAPP_COINBASE_SITE_ACTIVITY,Coinbase Site Actibity,
+artifact,RLEAPP_COINBASE_PERSONAL_DATA,Coinbase Personal Data,
+artifact,RLEAPP_COINBASE_DEVICES,Coinbase Devices,
+artifact,RLEAPP_COINBASE_CARD_PAYMENT,Coinbase Card Payment,
+artifact,RLEAPP_COINBASE_3RD_PARTY_AUTHS,Coinbase 3rd Party Authorizations,
+attribute,RLEAPP_COINBASE_ACTION,Action,String
+attribute,RLEAPP_COINBASE_SOURCE,Source,String
+attribute,RLEAPP_COINBASE_PLATFORM,Platform,String
+attribute,RLEAPP_COINBASE_ACCESS_GRANTED,Access Granted,datetime
+attribute,RLEAPP_COINBSASE_ACCESS_REVOKED,Access Revoked,datetime
+attribute,RELAP_COINBASE_EXP_MONTH,Expiration Month,Integer
+attribute ,RLEAPP_COINBASE_EXP_YEAR,Expiration Year,Integer
+attribute ,RLEAPP_COINBASE_FIRST6,First Six,Integer
+attribute ,RLEAPP_COINBASE_LAST4,Last 4,Integer
+attribute,RLEAPP_COINBASE_ZIP_CODE,Zip Code,String

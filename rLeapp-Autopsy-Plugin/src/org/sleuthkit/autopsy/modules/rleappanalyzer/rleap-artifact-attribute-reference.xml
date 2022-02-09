@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <!---
+    This file contains the parameters for how to map rLeapp plugin output to attributes inside Autopsy for the rleapp Analyser module.
+
+    Each FileName node corresponds to a tab seperated values (tsv) file that is produced from iLeapp.
+
+    A FileName will have an associated TSK artifact assigned to it.
+
+    Each TSK artifact may have multiple attributes that correspond to the columns of the output from the iLeapp program tsv file.
+
+
+    FileName:
+        filename:           The aLeapp TSV file that you want to process. 
+        description:        A description of the tsv file name, this is defined in the iLeapp plugin for each tsv file.
+        
+    ArtifactName:
+        artifactname:       The artifact that is to be created for the data in the tsv file.
+        comment:            This will be the data that will be added to the TSK_COMMENT attribute for each artifact.  If the artifact 
+                            does not need/require a comment then make the value null, a null comment will be ignored.
+                            
+    AttributeName:
+        attributeName:      The TSK attribute that the data corresponds to in the TSV file.  If the data has no corresponding TSK attribute then
+                            make the value null, this will make sure the data in this column is ignored.
+        columnName:         This is the column name that is defined in the tsv file and what the attributeName corresponds to.
+        required:           whether the attribute is required or not (yes or no)
+
+
+    -->
+    <rLeap_Files_To_Process>
+
+        <FileName filename="Coinbase - Transactions.tsv" description="Coinbase Transactions">
+            <ArtifactName artifactname="RLEAPP_COINBASE_TRANSACTIONS" comment="Coinbase Transactions">
+                <AttributeName attributename="RELAPP_COINBASE_ACCOUNT_NAME" columnName="Account_name" required="yes" />
+                <AttributeName attributename="RELAPP_COINBASE_AMOUNT" columnName="Amount" required="yes" />
+                <AttributeName attributename="RELAPP_COINBASE_BALANCE" columnName="Balance" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_ID" columnName="Coinbase_id" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_CRYPTO_HASH" columnName="Crypto_hash" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_CURRENCY" columnName="Currency" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_INSTANTLY_EXCHANGED" columnName="Instantly_exchanged" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_NOTES" columnName="Notes" required="yes" />
+                <AttributeName attributename="TSK_DATE_TIME" columnName="Timestamp" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_TO" columnName="To" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_TRANSFER_ID" columnName="Transfer_id" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_TRANSFER_PAYMENT_METHOD" columnName="Transfer_payment_method" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+</rLeap_Files_To_Process>

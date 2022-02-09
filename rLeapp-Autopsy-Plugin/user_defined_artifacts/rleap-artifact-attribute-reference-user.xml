@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <!---
+    This file contains the parameters for how to map cLeapp plugin output to attributes inside Autopsy for the rleapp Analyser module.  This is the User Defined version that lives outside of Autopsy
+
+    Each FileName node corresponds to a tab seperated values (tsv) file that is produced from rLeapp.
+
+    A FileName will have an associated TSK artifact assigned to it.
+
+    Each TSK artifact may have multiple attributes that correspond to the columns of the output from the rLeapp program tsv file.
+
+
+    FileName:
+        filename:           The cLeapp TSV file that you want to process. 
+        description:        A description of the tsv file name, this is defined in the rLeapp plugin for each tsv file.
+        
+    ArtifactName:
+        artifactname:       The artifact that is to be created for the data in the tsv file.
+        comment:            This will be the data that will be added to the TSK_COMMENT attribute for each artifact.  If the artifact 
+                            does not need/require a comment then make the value null, a null comment will be ignored.
+                            
+    AttributeName:
+        attributeName:      The TSK attribute that the data corresponds to in the TSV file.  If the data has no corresponding TSK attribute then
+                            make the value null, this will make sure the data in this column is ignored.
+        columnName:         This is the column name that is defined in the tsv file and what the attributeName corresponds to.
+        required:           whether the attribute is required or not (yes or no)
+
+
+    -->
+    <rLeap_Files_To_Process>
+
+        <FileName filename="Coinbase - Site Activity.tsv" description="Coinbase Site Activity">
+            <ArtifactName artifactname="RLEAPP_COINBASE_SITE_ACTIVITY" comment="Coinbase Site Activity">
+                <AttributeName attributename="RLEAPP_COINBASE_ACTION" columnName="Action" required="yes" />
+                <AttributeName attributename="TSK_IP_ADDRESS" columnName="Ip_address" required="yes" />
+                <AttributeName attributename="RELAPP_COINBASE_SOURCE" columnName="Source" required="yes" />
+                <AttributeName attributename="TSK_DATETIME" columnName="Time" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Coinbase - Personal Data.tsv" description="Coinbase Personal Data">
+            <ArtifactName artifactname="RLEAPP_COINBASE_PERSONAL_DATA" comment="Coinbase Personal Data">
+                <AttributeName attributename="TSK_NAME" columnName="Name" required="yes" />
+                <AttributeName attributename="TSK_VALUE" columnName="Value" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Coinbase - Devices Used.tsv" description="Coinbase Devices">
+            <ArtifactName artifactname="RLEAPP_COINBASE_DEVICES" comment="Devices Used">
+                <AttributeName attributename="null" columnName="Accept" required="no" />
+                <AttributeName attributename="null" columnName="Accept_encoding" required="no" />
+                <AttributeName attributename="null" columnName="Accept_language" required="no" />
+                <AttributeName attributename="TSK_IP_ADDRESS" columnName="Ip_address" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_PLATFORM" columnName="Platform" required="yes" />
+                <AttributeName attributename="null" columnName="Platform_version" required="no" />
+                <AttributeName attributename="null" columnName="Timezone_locale" required="no" />
+                <AttributeName attributename="null" columnName="Timezone_string" required="no" />
+                <AttributeName attributename="RLEAPP_COINBASE_USER_AGENT" columnName="User_agent" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Coinbase - Confirmed Devices.tsv" description="Coinbase Devices">
+            <ArtifactName artifactname="RLEAPP_COINBASE_DEVICES" comment="Devices Confirmed">
+                <AttributeName attributename="TSK_DATETIME" columnName="Confirmed" required="yes" />
+                <AttributeName attributename="TSK_IP_ADDRESS" columnName="Ip_address" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_USER_AGENT" columnName="User_agent" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Coinbase - Card Payment.tsv" description="Coinbase Card Payment">
+            <ArtifactName artifactname="RLEAPP_COINBASE_CARD_PAYMENT" comment="Card Payment">
+                <AttributeName attributename="TSK_NAME" columnName="Customer_name" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_EXP_MONTH" columnName="Expiration_month" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_EXP_YEAR" columnName="Expiration_year" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_FIRST6" columnName="First6" required="yes" />
+                <AttributeName attributename="TSK_COUNTRY" columnName="Issue_country" required="yes" />
+                <AttributeName attributename="TSK_BANK_NAME" columnName="Issuer" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_LAST4" columnName="Last4" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBASE_ZIP_CODE" columnName="Postal_code" required="yes" />
+                <AttributeName attributename="TSK_CARD_TYPE" columnName="Type" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+        <FileName filename="Coinbase - 3rd party authorizations.tsv" description="Coinbase 3rd Party Auths">
+            <ArtifactName artifactname="RLEAPP_COINBASE_3RD_PARTY_AUTHS" comment="null">
+                <AttributeName attributename="RLEAPP_COINBASE_ACCESS_GRANTED" columnName="Access_granted" required="yes" />
+                <AttributeName attributename="RLEAPP_COINBSASE_ACCESS_REVOKED" columnName="Access_revoked" required="yes" />
+                <AttributeName attributename="TSK_NAME" columnName="Name" required="yes" />
+            </ArtifactName>
+        </FileName>
+
+    </rLeap_Files_To_Process>
