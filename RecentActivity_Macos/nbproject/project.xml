@@ -51,6 +51,10 @@
                 <binary-origin>D:\GitHub\Autopsy-NBM-Plugins\RecentActivity_Macos\release\modules\ext\gson-2.8.6.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/dd-plist.jar</runtime-relative-path>
+                <binary-origin>D:\GitHub\Autopsy-NBM-Plugins\RecentActivity_Macos\release\modules\ext\dd-plist.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/commons-io-2.8.0.jar</runtime-relative-path>
                 <binary-origin>D:\GitHub\Autopsy-NBM-Plugins\RecentActivity_Macos\release\modules\ext\commons-io-2.8.0.jar</binary-origin>
             </class-path-extension>

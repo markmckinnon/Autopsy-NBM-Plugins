@@ -68,12 +68,14 @@ public final class RAImageIngestModule implements DataSourceIngestModule {
         Extract firefox = new Firefox(context);
         Extract SEUQA = new SearchEngineURLQueryAnalyzer(context);
         Extract osExtract = new ExtractOs(context);
+        Extract parsePlists = new ParsePlists(context);
         Extract dataSourceAnalyzer = new DataSourceUsageAnalyzer(context);
 //        Extract safari = new ExtractSafari(context);
         Extract webAccountType = new ExtractWebAccountType(context);
         Extract messageDomainType = new DomainCategoryRunner(context);
 
         extractors.add(osExtract); // this needs to run before the DataSourceUsageAnalyzer
+        extractors.add(parsePlists);
         extractors.add(dataSourceAnalyzer); //this needs to run after ExtractRegistry and ExtractOs
         extractors.add(chrome);
         extractors.add(firefox);

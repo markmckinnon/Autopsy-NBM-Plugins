@@ -39,8 +39,6 @@ import org.sleuthkit.datamodel.TskCoreException;
  * Create OS INFO artifacts for the Operating Systems believed to be present on
  * the data source.
  */
-@Messages({"ExtractOs.displayName=OS Info Analyzer",
-    "ExtractOS_progressMessage=Checking for OS"})
 class ExtractOs extends Extract {
 
     private static final Logger logger = Logger.getLogger(ExtractOs.class.getName());
@@ -65,6 +63,9 @@ class ExtractOs extends Extract {
     private Content dataSource;
     private final IngestJobContext context;
 
+@Messages({"ExtractOs.displayName=OS Info Analyzer",
+    "ExtractOS_progressMessage=Checking for OS"})
+            
     ExtractOs(IngestJobContext context) {
         super(Bundle.ExtractOs_displayName(), context);
         this.context = context;
