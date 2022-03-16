@@ -23,16 +23,6 @@
 package org.sleuthkit.autopsy.recentactivity.macos;
 
 import org.sleuthkit.autopsy.coreutils.SQLiteDBConnect;
-import xmlwise.Plist;
-import com.dd.plist.NSDictionary;
-import com.dd.plist.PropertyListParser;
-import com.dd.plist.NSObject;
-import com.dd.plist.NSArray;
-import com.dd.plist.NSDate;
-import com.dd.plist.NSString;
-import com.dd.plist.NSNumber;
-import com.dd.plist.NSData;
-import com.dd.plist.PropertyListFormatException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,20 +31,20 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import org.sleuthkit.autopsy.coreutils.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.sleuthkit.autopsy.casemodule.Case;
 import org.sleuthkit.autopsy.casemodule.NoCurrentCaseException;
+import org.sleuthkit.autopsy.casemodule.services.FileManager;
+import org.sleuthkit.autopsy.datamodel.ContentUtils;
 import org.sleuthkit.datamodel.AbstractFile;
 import org.sleuthkit.datamodel.Content;
 import org.sleuthkit.datamodel.TskCoreException;
-import xmlwise.XmlParseException;
 
 /**
  *
@@ -205,20 +195,14 @@ class Util {
         return (filetime / FILETIME_ONE_MILLISECOND) - FILETIME_EPOCH_DIFF;
     }
 
-    /**
-     * Reads a pList file
-     * 
-     */
-    static Map readPlist(final String fileName) {
+    public String getUsernameFromPath(String parentPath, String plistFileLocation) {
         
-        Map<String, Object> properties = new HashMap<>();
-        try {
-            properties = Plist.load(fileName);
-        } catch (XmlParseException |IOException ex) {
-            logger.log(Level.WARNING, "Error while trying to read pList file: " + fileName, ex); //NON-NLS            
-        }
-        
-        return properties;
-        
+        String newPath = parentPath.replace(plistFileLocation + '/', "");
+        int lastSlash = newPath.lastIndexOf('/');
+        String userName = newPath.substring(lastSlash + 1);
+        int x = 1;
+        return userName;
     }
+        
 }
+
