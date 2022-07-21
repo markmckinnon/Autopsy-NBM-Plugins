@@ -23,9 +23,11 @@
 package org.sleuthkit.autopsy.recentactivity.macos;
 
 import com.dd.plist.NSArray;
+import com.dd.plist.NSData;
 import com.dd.plist.NSDictionary;
 import com.dd.plist.NSNumber;
 import com.dd.plist.NSObject;
+import com.dd.plist.NSString;
 import com.dd.plist.PropertyListFormatException;
 import com.dd.plist.PropertyListParser;
 import com.google.common.collect.ImmutableMap;
@@ -40,10 +42,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import static java.util.Locale.US;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.lang.StringUtils;
 import org.openide.util.NbBundle.Messages;
 import org.sleuthkit.autopsy.casemodule.Case;
 import org.sleuthkit.autopsy.casemodule.NoCurrentCaseException;
@@ -73,6 +75,7 @@ class ParsePlists extends Extract {
     private final String moduleName;
 
     Blackboard blkBoard;
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     
     private static final Map<String, String> XML_PLISTS_MAP = ImmutableMap.<String, String>builder()
             .put("SystemVersion.plist", "/System/Library/CoreServices")
@@ -83,25 +86,36 @@ class ParsePlists extends Extract {
             .put("com.apple.wifi.known-networks.plist", "Library/Preferences")
 //            .put("appList.dat", "Library/Application Support/com.apple.spotlight")
             .put("com.apple.dock.plist", "/Library/Preferences")
+            .put("com.apple.Bluetooth.plist", "/Library/Preferences/")
+            .put("preferences.plist", "/Library/Preferences/SystemConfiguration")
+            .put("NetworkInterfaces.plist", "Library/Preferences/SystemConfiguration")
             .build();
 
     private static final Map<String, String> PROCESS_XML_PLISTS_MAP = ImmutableMap.<String, String>builder()
             .put("SystemVersion.plist", "osInfo")
-            .put("InstallHistory.plist", "installedPrograms")
+           .put("InstallHistory.plist", "installedPrograms")
             .put("MobileMeAccounts.plist", "mobileMe")
             .put("com.apple.airport.preferences.plist", "airport_prefs")
             .put("com.apple.airport.preferences.plist.backup", "airport_prefs")
             .put("com.apple.wifi.known-networks.plist", "airport_prefs")
             .put("appList.dat", "appList")
             .put("com.apple.dock.plist", "dockItems")
+            .put("com.apple.Bluetooth.plist", "bluetooth")
+            .put("preferences.plist", "preferences")
+            .put("NetworkInterfaces.plist", "networkInterfaces")
             .build();
 
     @Messages({"Progress_Message_Plist=Processing pList",
                "ParsePlist.displayName=ParsePlists",
                "Progress.Message.OS.Version=Processing OS Version",
                "Progress.Message.Installed_Programs=Processing Installed Programs",
+               "Progress.Message.Mobileme=Processing Mobile Me",
                "Progress.Message.Airport.Prefs=Processing Airport Prefs",
+               "Progress.Message.Airport.Applist=Processing Application Lists",
                "Progress.Message.Dock.Items=Processing Dock Items",
+               "Progress.Message.Bluetooth=Processing Bluetooth",
+               "Progress.Message.Network_Interfaces=Processing Network Interfaces",
+               "Progress.Message.Preferences=Processing Preferences",
     })
 
     ParsePlists(IngestJobContext context) {
@@ -144,7 +158,7 @@ class ParsePlists extends Extract {
                     }
                     break;
                 case "mobileMe":
-//                    progressBar.progress(NbBundle.getMessage(this.getClass(), "Progress_Messasge_Installed_Programs"));
+//                    progressBar.progress(NbBundle.getMessage(this.getClass(), "Progress_Messasge_Mobileme"));
                     this.getMobileMe(xmlPlists.getKey(), xmlPlists.getValue(), ingestJobId, tempDirPath);
                     if (context.dataSourceIngestIsCancelled()) {
                         return;
@@ -158,7 +172,7 @@ class ParsePlists extends Extract {
                     }
                     break;
                 case "appList":
-//                    progressBar.progress(NbBundle.getMessage(this.getClass(), "Progress_Message_Installed_Programs"));
+//                    progressBar.progress(NbBundle.getMessage(this.getClass(), "Progress_Message_Applist"));
                     this.getAppList(xmlPlists.getKey(), xmlPlists.getValue(), ingestJobId, tempDirPath);
                     if (context.dataSourceIngestIsCancelled()) {
                         return;
@@ -167,6 +181,26 @@ class ParsePlists extends Extract {
                 case "dockItems":
 //                    progressBar.progress(NbBundle.getMessage(this.getClass(), "Progress_Message_Dock_Items"));
                     this.getDockItems(xmlPlists.getKey(), xmlPlists.getValue(), ingestJobId, tempDirPath);
+                    if (context.dataSourceIngestIsCancelled()) {
+                        return;
+                    }
+                    break;
+                case "bluetooth":
+//                    progressBar.progress(NbBundle.getMessage(this.getClass(), "Progress_Message_Bluetooth"));
+                    this.getBluetooth(xmlPlists.getKey(), xmlPlists.getValue(), ingestJobId, tempDirPath);
+                    if (context.dataSourceIngestIsCancelled()) {
+                        return;
+                    }
+                    break;
+                case "preferences":
+//                    progressBar.progress(NbBundle.getMessage(this.getClass(), "Progress_Message_Preferences"));
+                    this.getPreferences(xmlPlists.getKey(), xmlPlists.getValue(), ingestJobId, tempDirPath);
+                    if (context.dataSourceIngestIsCancelled()) {
+                        return;
+                    }
+                case "networkInterfaces":
+//                    progressBar.progress(NbBundle.getMessage(this.getClass(), "Progress_Message_Network_Interfaces"));
+                    this.getNetworkInterfaces(xmlPlists.getKey(), xmlPlists.getValue(), ingestJobId, tempDirPath);
                     if (context.dataSourceIngestIsCancelled()) {
                         return;
                     }
@@ -576,6 +610,285 @@ class ParsePlists extends Extract {
         }
     }
 
+    /**
+     * get bluetooth artifacts
+     *
+     * @param plistFileName   File Name of the plist to parse
+     * @param plistFileLocation   Location of the plist file in the image
+     * @param ingestJobId     The ingest job id.
+     * @param tempDirPath   the temporary directory to write the plist file to
+     */
+    private void getBluetooth(String plistFileName, String plistFileLocation, long ingestJobId, String tempDirPath) {
+        FileManager fileManager = currentCase.getServices().getFileManager();
+        List<AbstractFile> bluetooths;
+        List<BlackboardArtifact> newArtifacts = new ArrayList<>();
+        
+        try {
+            bluetooths = writeFileToTemp(plistFileName, plistFileLocation, tempDirPath);
+        } catch (TskCoreException | IOException ex) {
+            logger.log(Level.SEVERE, String.format("Error while get/write plist file file name %s and location %s and temp dire path %s.", plistFileName, plistFileLocation, tempDirPath), ex);//NON-NLS
+            return;    
+        }
+        
+        for (AbstractFile bluetooth : bluetooths) {
+            
+            if (bluetooth.getName().contains("-slack") || !bluetooth.getParentPath().contains(plistFileLocation)) {
+                continue;
+            }
+            
+ // Remove this line for production.  Only used for my testing dataset
+            if (bluetooth.getParentPath().contains("surge")) {
+               continue;
+            }
+            
+            String bluetoothFileName = tempDirPath + File.separator + bluetooth.getId() + "_" + bluetooth.getName();
+
+            try {
+                File file = new File(bluetoothFileName);
+                NSDictionary rootDict = (NSDictionary)PropertyListParser.parse(file);
+                NSDictionary deviceCache = (NSDictionary) rootDict.get("DeviceCache");
+                if (deviceCache != null) {
+                    NSArray pariedDevices = (NSArray) rootDict.get("BRPairedDevices");
+                    String[] deviceCacheKeys = deviceCache.allKeys();
+                    for (String deviceCacheKey : deviceCacheKeys) {
+                        NSDictionary device = (NSDictionary) deviceCache.get(deviceCacheKey);
+                        Collection<BlackboardAttribute> bbattributesBta = new ArrayList<>();
+                        Collection<BlackboardAttribute> bbattributesBtp = new ArrayList<>();
+                        bbattributesBta.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_MAC_ADDRESS, moduleName, deviceCacheKey));
+                        bbattributesBta.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_NAME, moduleName, device.get("Name").toString()));
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy", US);
+                        Long lastInquiry = Long.valueOf(0);
+                        try {
+                            Date newDate = dateFormat.parse(device.get("LastInquiryUpdate").toString());
+                            lastInquiry = newDate.getTime() / 1000;
+                        } catch (ParseException ex) {
+                          // catching error and displaying date that could not be parsed
+                          // we set the timestamp to 0 and continue on processing
+                            logger.log(Level.WARNING, String.format("Failed to parse date/time %s Installed Program.", device.get("date").toString()), ex); //NON-NLS
+                        }
+                        bbattributesBta.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_DATETIME, moduleName, lastInquiry));
+                        newArtifacts.add(createArtifactWithAttributes(BlackboardArtifact.Type.TSK_BLUETOOTH_ADAPTER, bluetooth, bbattributesBta));
+                        if (pariedDevices.containsObject(deviceCacheKey) ) {
+                            bbattributesBtp.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_MAC_ADDRESS, moduleName, deviceCacheKey));
+                            bbattributesBtp.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_DEVICE_NAME, moduleName, device.get("Name").toString()));
+                            bbattributesBta.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_DATETIME, moduleName, lastInquiry));
+                            newArtifacts.add(createArtifactWithAttributes(BlackboardArtifact.Type.TSK_BLUETOOTH_PAIRING, bluetooth, bbattributesBtp));
+                        }
+                    }
+                }
+            } catch (ParserConfigurationException | TskCoreException | SAXException | ParseException | IOException | PropertyListFormatException ex) {
+                this.addErrorMessage(NbBundle.getMessage(this.getClass(), "Process_Installed_Programs_Plist_File"));
+                logger.log(Level.WARNING, NbBundle.getMessage(this.getClass(), "Process_Installed_Programs_Plist_File"), ex); //NON-NLS
+                return;
+            }
+
+        }
+       
+
+        if (!context.dataSourceIngestIsCancelled()) {
+            postArtifacts(newArtifacts);
+        }
+    }
+
+    /**
+     * get preferences artifacts
+     *
+     * @param plistFileName   File Name of the plist to parse
+     * @param plistFileLocation   Location of the plist file in the image
+     * @param ingestJobId     The ingest job id.
+     * @param tempDirPath   the temporary directory to write the plist file to
+     */
+    private void getPreferences(String plistFileName, String plistFileLocation, long ingestJobId, String tempDirPath) {
+        FileManager fileManager = currentCase.getServices().getFileManager();
+        List<AbstractFile> preferences;
+        List<BlackboardArtifact> newArtifacts = new ArrayList<>();
+        
+        try {
+            preferences = writeFileToTemp(plistFileName, plistFileLocation, tempDirPath);
+        } catch (TskCoreException | IOException ex) {
+            logger.log(Level.SEVERE, String.format("Error while get/write plist file file name %s and location %s and temp dire path %s.", plistFileName, plistFileLocation, tempDirPath), ex);//NON-NLS
+            return;    
+        }
+        
+        BlackboardArtifact.Type networkArtifactType;
+        BlackboardAttribute.Type uuidTypeAttribute;
+        BlackboardAttribute.Type ipv4Attribute;
+        BlackboardAttribute.Type ipv6Attribute;
+        BlackboardAttribute.Type hardwareAttribute;
+        BlackboardAttribute.Type typeAttribute;
+        BlackboardAttribute.Type userDefinedNameAttribute;
+ 
+        try {
+            networkArtifactType = blkBoard.getOrAddArtifactType("RA_NETWORK_DETAILS", "Network Details");
+            uuidTypeAttribute = blkBoard.getOrAddAttributeType("RA_UUID", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "UUID");
+            ipv4Attribute = blkBoard.getOrAddAttributeType("RA_WIFI_IN", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "IPv4 ConfigMethod");
+            ipv6Attribute = blkBoard.getOrAddAttributeType("RA_WIFI_OUT", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "IPv6 ConfigMethod");
+            hardwareAttribute = blkBoard.getOrAddAttributeType("RA_HARDWARE", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "Hardware");
+            typeAttribute = blkBoard.getOrAddAttributeType("RA_TYPE", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "Type");
+            userDefinedNameAttribute = blkBoard.getOrAddAttributeType("RA_USER_DEFINED_NAME", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "User Defined Name");
+        } catch (Blackboard.BlackboardException ex) {
+            logger.log(Level.SEVERE, "Cannot create artifact/attributes for network usage", ex);//NON-NLS
+            return;    
+        }
+
+        for (AbstractFile preference : preferences) {
+            
+            if (preference.getName().contains("-slack") || !preference.getParentPath().contains(plistFileLocation)) {
+                continue;
+            }
+            
+ // Remove this line for production.  Only used for my testing dataset
+            if (preference.getParentPath().contains("surge")) {
+               continue;
+            }
+            
+            String preferenceFileName = tempDirPath + File.separator + preference.getId() + "_" + preference.getName();
+
+            try {
+                File file = new File(preferenceFileName);
+                NSDictionary rootDict = (NSDictionary)PropertyListParser.parse(file);
+                logger.log(Level.WARNING, NbBundle.getMessage(this.getClass(), "Process_Installed_Programs_Plist_File")); //NON-NLS
+                NSDictionary networkServices = (NSDictionary) rootDict.get("NetworkServices");
+                if (networkServices != null) {
+                    String[] networkServicesKeys = networkServices.allKeys();
+                    for (String networkServiceKey : networkServicesKeys) {
+                        NSDictionary networkService = (NSDictionary) networkServices.get(networkServiceKey);
+                        Collection<BlackboardAttribute> bbattributes = new ArrayList<>();
+                        bbattributes.add(new BlackboardAttribute(uuidTypeAttribute, moduleName, networkServiceKey));
+                        NSDictionary dict = (NSDictionary) networkService.get("IPv4");
+                        bbattributes.add(new BlackboardAttribute(ipv4Attribute, moduleName, dict.get("ConfigMethod").toString()));
+                        dict = (NSDictionary) networkService.get("IPv6");
+                        bbattributes.add(new BlackboardAttribute(ipv6Attribute, moduleName, dict.get("ConfigMethod").toString()));
+                        dict = (NSDictionary) networkService.get("Interface");
+                        bbattributes.add(new BlackboardAttribute(hardwareAttribute, moduleName, dict.get("Hardware").toString()));
+                        bbattributes.add(new BlackboardAttribute(typeAttribute, moduleName, dict.get("Type").toString()));
+                        bbattributes.add(new BlackboardAttribute(userDefinedNameAttribute, moduleName, dict.get("UserDefinedName").toString()));
+                        newArtifacts.add(createArtifactWithAttributes(networkArtifactType, preference, bbattributes));
+                    }
+                }
+            } catch (ParserConfigurationException | TskCoreException | SAXException | ParseException | IOException | PropertyListFormatException ex) {
+                this.addErrorMessage(NbBundle.getMessage(this.getClass(), "Process_Installed_Programs_Plist_File"));
+                logger.log(Level.WARNING, NbBundle.getMessage(this.getClass(), "Process_Installed_Programs_Plist_File"), ex); //NON-NLS
+                return;
+            }
+        }
+
+        if (!context.dataSourceIngestIsCancelled()) {
+            postArtifacts(newArtifacts);
+        }
+    }
+
+    /**
+     * get networkinterfaces artifacts
+     *
+     * @param plistFileName   File Name of the plist to parse
+     * @param plistFileLocation   Location of the plist file in the image
+     * @param ingestJobId     The ingest job id.
+     * @param tempDirPath   the temporary directory to write the plist file to
+     */
+    private void getNetworkInterfaces(String plistFileName, String plistFileLocation, long ingestJobId, String tempDirPath) {
+        FileManager fileManager = currentCase.getServices().getFileManager();
+        List<AbstractFile> absFiles;
+        List<BlackboardArtifact> newArtifacts = new ArrayList<>();
+        
+        try {
+            absFiles = writeFileToTemp(plistFileName, plistFileLocation, tempDirPath);
+        } catch (TskCoreException | IOException ex) {
+            logger.log(Level.SEVERE, String.format("Error while get/write plist file file name %s and location %s and temp dire path %s.", plistFileName, plistFileLocation, tempDirPath), ex);//NON-NLS
+            return;    
+        }
+        
+        BlackboardArtifact.Type networkArtifactType;
+        BlackboardAttribute.Type categoryAttribute;
+        BlackboardAttribute.Type bsdNameAttribute;
+        BlackboardAttribute.Type activeAttribute;
+        BlackboardAttribute.Type ioBuiltinAttribute;
+        BlackboardAttribute.Type ioInterfaceNamePrefixAttribute;
+        BlackboardAttribute.Type ioInterfaceTypeAttribute;
+        BlackboardAttribute.Type ioInterfaceUnitAttribute;
+        BlackboardAttribute.Type ioMacAddressAttribute;
+        BlackboardAttribute.Type ioPathMatchAttribute;
+        BlackboardAttribute.Type scNetworkInterfaceInfoAttribute;
+        BlackboardAttribute.Type scNetworkInterfaceTypeAttribute;
+ 
+        try {
+            networkArtifactType = blkBoard.getOrAddArtifactType("RA_NETWORK_INTERFACES", "Network Interfaces");
+            categoryAttribute = blkBoard.getOrAddAttributeType("RA_CATEGORY", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "Category");
+            bsdNameAttribute = blkBoard.getOrAddAttributeType("RA_BSD_NAME", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "BSD Name");
+            activeAttribute = blkBoard.getOrAddAttributeType("RA_ACTIVE", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "Active");
+            ioBuiltinAttribute = blkBoard.getOrAddAttributeType("RA_IO_BUILTIN", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "IO Bulitin");
+            ioInterfaceNamePrefixAttribute = blkBoard.getOrAddAttributeType("RA_IO_INTERFACE_NAME", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "IO Interface Name Prefix");
+            ioInterfaceTypeAttribute = blkBoard.getOrAddAttributeType("RA_IO_INTERFACE_TYPE", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "IO Interface Type");
+            ioInterfaceUnitAttribute = blkBoard.getOrAddAttributeType("RA_IO_INTERFACE_UNIT", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "IO Interface Unit");
+            ioMacAddressAttribute = blkBoard.getOrAddAttributeType("RA_MAC_ADDRESS", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "IO Mac Address");
+            ioPathMatchAttribute = blkBoard.getOrAddAttributeType("RA_IO_PATH_MATCH", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "IO Path Matchi");
+            scNetworkInterfaceInfoAttribute = blkBoard.getOrAddAttributeType("RA_SC_INTERFACE_INFO", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "SC Network Interface Name");
+            scNetworkInterfaceTypeAttribute = blkBoard.getOrAddAttributeType("RA_SC_INTERFACE_TYPE", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "SC Netowrk Interface Type");
+        } catch (Blackboard.BlackboardException ex) {
+            logger.log(Level.SEVERE, "Cannot create artifact/attributes for network usage", ex);//NON-NLS
+            return;    
+        }
+
+        for (AbstractFile absFile : absFiles) {
+            
+            if (absFile.getName().contains("-slack") || !absFile.getParentPath().contains(plistFileLocation)) {
+                continue;
+            }
+            
+ // Remove this line for production.  Only used for my testing dataset
+            if (absFile.getParentPath().contains("surge")) {
+               continue;
+            }
+            
+            String absFileName = tempDirPath + File.separator + absFile.getId() + "_" + absFile.getName();
+
+            try {
+                File file = new File(absFileName);
+                NSDictionary rootDict = (NSDictionary)PropertyListParser.parse(file);
+                logger.log(Level.WARNING, NbBundle.getMessage(this.getClass(), "Process_Installed_Programs_Plist_File")); //NON-NLS
+                NSArray networkInterfaces = (NSArray) rootDict.get("Interfaces");
+                NSObject[] parameters = networkInterfaces.getArray();
+                for (NSObject nsdict : parameters) {
+                    NSDictionary dict = (NSDictionary) nsdict;
+
+                    Collection<BlackboardAttribute> bbattributes = new ArrayList<>();
+                    bbattributes.add(new BlackboardAttribute(categoryAttribute, moduleName, "Interfaces"));
+                    NSString bsdName = (NSString) dict.get("BSD Name");
+                    bbattributes.add(new BlackboardAttribute(bsdNameAttribute, moduleName, bsdName.getContent()));
+                    String active = "";
+                    if (dict.containsKey("Active")) {
+                        active = "True";
+                    }
+                    bbattributes.add(new BlackboardAttribute(activeAttribute, moduleName, active));
+                    NSNumber ioBuiltin = (NSNumber) dict.get("IOBuiltin");
+                    if (ioBuiltin.boolValue()) {
+                        bbattributes.add(new BlackboardAttribute(ioBuiltinAttribute, moduleName, "True"));
+                    } else {                        
+                        bbattributes.add(new BlackboardAttribute(ioBuiltinAttribute, moduleName, "False"));
+                    }
+                    bbattributes.add(new BlackboardAttribute(ioInterfaceNamePrefixAttribute, moduleName, dict.get("IOInterfaceNamePrefix").toString()));
+                    bbattributes.add(new BlackboardAttribute(ioInterfaceTypeAttribute, moduleName, dict.get("IOInterfaceType").toString()));
+                    bbattributes.add(new BlackboardAttribute(ioInterfaceUnitAttribute, moduleName, dict.get("IOInterfaceUnit").toString()));
+                    NSData ioMacAddress = (NSData) dict.get("IOMACAddress");
+                    byte[] ioMac = ioMacAddress.bytes();
+                    String macAddress = bytesToHex(ioMac, ":");
+                    bbattributes.add(new BlackboardAttribute(ioMacAddressAttribute, moduleName, macAddress));
+                    bbattributes.add(new BlackboardAttribute(ioPathMatchAttribute, moduleName, dict.get("IOPathMatch").toString()));
+                    bbattributes.add(new BlackboardAttribute(scNetworkInterfaceInfoAttribute, moduleName, dict.get("SCNetworkInterfaceInfo").toString()));
+                    bbattributes.add(new BlackboardAttribute(scNetworkInterfaceTypeAttribute, moduleName, dict.get("SCNetworkInterfaceType").toString()));
+                    newArtifacts.add(createArtifactWithAttributes(networkArtifactType, absFile, bbattributes));
+                    }
+            } catch (ParserConfigurationException | TskCoreException | SAXException | ParseException | IOException | PropertyListFormatException ex) {
+                this.addErrorMessage(NbBundle.getMessage(this.getClass(), "Process_Installed_Programs_Plist_File"));
+                logger.log(Level.WARNING, NbBundle.getMessage(this.getClass(), "Process_Installed_Programs_Plist_File"), ex); //NON-NLS
+                return;
+            }
+        }
+
+        if (!context.dataSourceIngestIsCancelled()) {
+            postArtifacts(newArtifacts);
+        }
+    }
     private void loadXMLFile(String xmlFilePath) {
         try {
           File file = new File(xmlFilePath);
@@ -660,5 +973,20 @@ class ParsePlists extends Extract {
         
         return absFiles;
     }
-  
+ 
+    public static String bytesToHex(byte[] bytes, String formatSeperator) {
+        char[] hexChars = new char[bytes.length * 2];
+        String hexString = "";
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+            hexString = hexString + HEX_ARRAY[v >>> 4] + HEX_ARRAY[v & 0x0F] + formatSeperator; 
+        }
+        String formattedString = "";
+        for (char hexChar : hexChars) {
+            formattedString = hexChar + ":";
+        }
+        return StringUtils.chop(hexString);
+}
 }
