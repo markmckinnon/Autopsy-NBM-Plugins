@@ -81,7 +81,7 @@ class ParsePlists extends Extract {
             .put("SystemVersion.plist", "/System/Library/CoreServices")
             .put("InstallHistory.plist", "Library/Receipts")
 //            .put("MobileMeAccounts.plist", "Library/Preferences")
-            .put("com.apple.airport.preferences.plist", "Library/Preferences/SystemConfiguration")
+//            .put("com.apple.airport.preferences.plist", "Library/Preferences/SystemConfiguration")
             .put("com.apple.airport.preferences.plist.backup", "Library/Preferences/SystemConfiguration")
             .put("com.apple.wifi.known-networks.plist", "Library/Preferences")
 //            .put("appList.dat", "Library/Application Support/com.apple.spotlight")
@@ -101,8 +101,7 @@ class ParsePlists extends Extract {
             .put("appList.dat", "appList")
             .put("com.apple.dock.plist", "dockItems")
             .put("com.apple.Bluetooth.plist", "bluetooth")
-            .put("preferences.plist", "preferences")
-            .put("NetworkInterfaces.plist", "networkInterfaces")
+//            .put("NetworkInterfaces.plist", "networkInterfaces")
             .build();
 
     @Messages({"Progress_Message_Plist=Processing pList",
@@ -461,8 +460,10 @@ class ParsePlists extends Extract {
                       SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy", US);
                       Long lastAutoJoinAt = Long.valueOf(0);
                       try {
-                          Date newDate = dateFormat.parse(dict.get("LastAutoJoinAt").toString());
-                          lastAutoJoinAt = newDate.getTime() / 1000;
+                          if (null != dict.get("LastAutoJoinAt")) {
+                              Date newDate = dateFormat.parse(dict.get("LastAutoJoinAt").toString());
+                              lastAutoJoinAt = newDate.getTime() / 1000;
+                          }
                       } catch (ParseException ex) {
                         // catching error and displaying date that could not be parsed
                         // we set the timestamp to 0 and continue on processing
