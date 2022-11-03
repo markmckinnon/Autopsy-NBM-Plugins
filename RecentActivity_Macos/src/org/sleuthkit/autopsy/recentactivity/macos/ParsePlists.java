@@ -87,7 +87,7 @@ class ParsePlists extends Extract {
 //            .put("appList.dat", "Library/Application Support/com.apple.spotlight")
             .put("com.apple.dock.plist", "/Library/Preferences")
             .put("com.apple.Bluetooth.plist", "/Library/Preferences/")
-            .put("preferences.plist", "/Library/Preferences/SystemConfiguration")
+//            .put("preferences.plist", "/Library/Preferences/SystemConfiguration")
             .put("NetworkInterfaces.plist", "Library/Preferences/SystemConfiguration")
             .build();
 
@@ -101,7 +101,8 @@ class ParsePlists extends Extract {
             .put("appList.dat", "appList")
             .put("com.apple.dock.plist", "dockItems")
             .put("com.apple.Bluetooth.plist", "bluetooth")
-//            .put("NetworkInterfaces.plist", "networkInterfaces")
+            .put("preferences.plist", "preferences")
+            .put("NetworkInterfaces.plist", "networkInterfaces")
             .build();
 
     @Messages({"Progress_Message_Plist=Processing pList",
@@ -141,6 +142,7 @@ class ParsePlists extends Extract {
         for (Map.Entry<String, String> xmlPlists : XML_PLISTS_MAP.entrySet()) {
             String plistName = xmlPlists.getKey();
             progressBar.progress(NbBundle.getMessage(this.getClass(), "Progress_Message_Plist"));
+             logger.log(Level.SEVERE, String.format("processing %s.", plistName));
             switch (PROCESS_XML_PLISTS_MAP.get(plistName)) {
                 case "osInfo":
 //                    progressBar.progress(NbBundle.getMessage(this.getClass(), "Progress_Message_OS_Version"));
@@ -324,8 +326,10 @@ class ParsePlists extends Extract {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy", US);
                     Long dateLong = Long.valueOf(0);
                     try {
-                        Date newDate = dateFormat.parse(dict.get("date").toString());
-                        dateLong = newDate.getTime() / 1000;
+                        if (dict.containsKey("date")) {
+                            Date newDate = dateFormat.parse(dict.get("date").toString());
+                            dateLong = newDate.getTime() / 1000;
+                        }
                     } catch (ParseException ex) {
                         // catching error and displaying date that could not be parsed
                         // we set the timestamp to 0 and continue on processing
@@ -451,30 +455,32 @@ class ParsePlists extends Extract {
             try {
                   File file = new File(airportPrefFileName);
                   NSDictionary rootDict = (NSDictionary)PropertyListParser.parse(file);
-                  NSDictionary knownNetworkValues = (NSDictionary) rootDict.get("KnownNetworks");
-                  String[] knownNetworkKeys = knownNetworkValues.allKeys();
-                  for (String knownNetwork : knownNetworkKeys) {
-                      NSDictionary dict = (NSDictionary) knownNetworkValues.get(knownNetwork);
-                      Collection<BlackboardAttribute> bbattributes = new ArrayList<>();
-                      String ssid = dict.get("SSIDString").toString(); 
-                      SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy", US);
-                      Long lastAutoJoinAt = Long.valueOf(0);
-                      try {
-                          if (null != dict.get("LastAutoJoinAt")) {
-                              Date newDate = dateFormat.parse(dict.get("LastAutoJoinAt").toString());
-                              lastAutoJoinAt = newDate.getTime() / 1000;
-                          }
-                      } catch (ParseException ex) {
-                        // catching error and displaying date that could not be parsed
-                        // we set the timestamp to 0 and continue on processing
-                          logger.log(Level.WARNING, String.format("Failed to parse date/time %s Installed Program.", dict.get("date").toString()), ex); //NON-NLS
-                      }
-                      bbattributes.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_SSID, moduleName, ssid));
-                      bbattributes.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_DATETIME, moduleName, lastAutoJoinAt));
+                  if (rootDict.containsKey("KnownNetworks")) {
+                    NSDictionary knownNetworkValues = (NSDictionary) rootDict.get("KnownNetworks");
+                    String[] knownNetworkKeys = knownNetworkValues.allKeys();
+                    for (String knownNetwork : knownNetworkKeys) {
+                        NSDictionary dict = (NSDictionary) knownNetworkValues.get(knownNetwork);
+                        Collection<BlackboardAttribute> bbattributes = new ArrayList<>();
+                        String ssid = dict.get("SSIDString").toString(); 
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy", US);
+                        Long lastAutoJoinAt = Long.valueOf(0);
+                        try {
+                            if (dict.containsKey("LastAutoJoinAt")) {
+                                Date newDate = dateFormat.parse(dict.get("LastAutoJoinAt").toString());
+                                lastAutoJoinAt = newDate.getTime() / 1000;
+                            }
+                        } catch (ParseException ex) {
+                          // catching error and displaying date that could not be parsed
+                          // we set the timestamp to 0 and continue on processing
+                            logger.log(Level.WARNING, String.format("Failed to parse date/time %s Installed Program.", dict.get("date").toString()), ex); //NON-NLS
+                        }
+                        bbattributes.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_SSID, moduleName, ssid));
+                        bbattributes.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_DATETIME, moduleName, lastAutoJoinAt));
 
-                    newArtifacts.add(createArtifactWithAttributes(BlackboardArtifact.Type.TSK_WIFI_NETWORK, airportPref, bbattributes));
-                }
-                
+                      newArtifacts.add(createArtifactWithAttributes(BlackboardArtifact.Type.TSK_WIFI_NETWORK, airportPref, bbattributes));
+                  }
+
+                  }
             } catch (ParserConfigurationException | TskCoreException | SAXException | ParseException | IOException | PropertyListFormatException ex) {
                 this.addErrorMessage(NbBundle.getMessage(this.getClass(), "Process_Installed_Programs_Plist_File"));
                 logger.log(Level.WARNING, NbBundle.getMessage(this.getClass(), "Process_Installed_Programs_Plist_File"), ex); //NON-NLS
@@ -656,12 +662,16 @@ class ParsePlists extends Extract {
                         Collection<BlackboardAttribute> bbattributesBta = new ArrayList<>();
                         Collection<BlackboardAttribute> bbattributesBtp = new ArrayList<>();
                         bbattributesBta.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_MAC_ADDRESS, moduleName, deviceCacheKey));
-                        bbattributesBta.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_NAME, moduleName, device.get("Name").toString()));
+                        if (device.containsKey("Name")) {
+                            bbattributesBta.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_NAME, moduleName, device.get("Name").toString()));
+                        }
                         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy", US);
                         Long lastInquiry = Long.valueOf(0);
                         try {
-                            Date newDate = dateFormat.parse(device.get("LastInquiryUpdate").toString());
-                            lastInquiry = newDate.getTime() / 1000;
+                            if (device.containsKey("LastInquiryUpdate")) {
+                                Date newDate = dateFormat.parse(device.get("LastInquiryUpdate").toString());
+                                lastInquiry = newDate.getTime() / 1000;
+                            }
                         } catch (ParseException ex) {
                           // catching error and displaying date that could not be parsed
                           // we set the timestamp to 0 and continue on processing

@@ -221,14 +221,13 @@ class ParseSQLite extends Extract {
 
             if (absFile.getName().equals(sqliteDbFileName)) {
                 // 978307200 is the number of seconds difference bewteen Unix Epoch time and Apple Absolute Epoch time
-                String sqlStatement = "SELECT m.rowid as msg_id, m.handle_id, m.text ,c.chat_identifier as contact, " +
+                String sqlStatementSelect = "SELECT m.rowid as msg_id, m.handle_id, m.text ,c.chat_identifier as contact, " +
                   " (case when m.is_from_me == 0 then '->' when m.is_from_me == 1 then '<-' end ) as direction, " +
                   " m.account, (m.date/1000000000) + 978307200 as date, (m.date_read/1000000000) + 978307200 as date_read, " +
                   " (m.date_delivered/1000000000) + 978307200 as date_delivered, m.is_from_me, m.is_read, " +
-// Need to check the column exists for this
-                  " m.destination_caller_id, " +
-                  " IFNULL(a.filename, 'None') as att_path, IFNULL(a.transfer_name, 'None') as att_name, a.total_bytes as att_size " +
-                  " from message as m " +
+                  " IFNULL(a.filename, 'None') as att_path, IFNULL(a.transfer_name, 'None') as att_name, a.total_bytes as att_size ";  //NON-NLS
+
+                String sqlStatementFrom = " from message as m " +
                   " LEFT JOIN message_attachment_join as ma on ma.message_id = m.rowid " +
                   " LEFT JOIN attachment as a on a.ROWID=ma.attachment_id " +
                   " LEFT JOIN chat_message_join as cmj on cmj.message_id = m.rowid " +
@@ -240,6 +239,13 @@ class ParseSQLite extends Extract {
                 
                 String sqliteFileName = tempDirPath + File.separator + absFile.getId() + "_" + absFile.getName();
                 CommunicationArtifactsHelper accountHelper;
+
+                String sqlStatement = "";
+                if (checkColumnExists(sqliteFileName, "destination_caller_id", "message")) {
+                    sqlStatement = sqlStatementSelect + ", m.destination_caller_id" + sqlStatementFrom;
+                } else {
+                    sqlStatement = sqlStatementSelect + sqlStatementFrom;
+                }
                 
                 try (SQLiteDBConnect tempdbconnect = new SQLiteDBConnect("org.sqlite.JDBC", "jdbc:sqlite:" + sqliteFileName); //NON-NLS
                         ResultSet resultSet = tempdbconnect.executeQry(sqlStatement)) {
@@ -917,6 +923,23 @@ class ParseSQLite extends Extract {
         }
         
         return absFiles;
+    }
+    
+    private boolean checkColumnExists(String dbName, String columnName, String tableName) {
+        
+        String sqlStatement = "PRAGMA table_info(" + tableName + ");";
+        try (SQLiteDBConnect tempdbconnect = new SQLiteDBConnect("org.sqlite.JDBC", "jdbc:sqlite:" + dbName); //NON-NLS
+            ResultSet resultSet = tempdbconnect.executeQry(sqlStatement)) {
+                while (resultSet.next()) {
+                    if (resultSet.getString("name").toLowerCase().equals(columnName.toLowerCase())) {
+                        return true;
+                    }            
+                }
+            }  catch (SQLException  ex) {
+                    logger.log(Level.SEVERE, "Error while trying to read into a sqlite db " + dbName, ex);//NON-NLS
+            }
+    
+        return false;
     }
 
     private void checkWalShmFiles(String fileName, String fileLocation, String tempDirPath, Long fileId) throws TskCoreException, IOException{
