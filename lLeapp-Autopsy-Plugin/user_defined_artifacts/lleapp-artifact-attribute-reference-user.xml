@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <!---
+    This file contains the parameters for how to map lLeapp plugin output to attributes inside Autopsy for the lleapp Analyser module.
+
+    Each FileName node corresponds to a tab seperated values (tsv) file that is produced from lLeapp.
+
+    A FileName will have an associated TSK artifact assigned to it.
+
+    Each TSK artifact may have multiple attributes that correspond to the columns of the output from the lLeapp program tsv file.
+
+
+    FileName:
+        filename:           The lLeapp TSV file that you want to process. 
+        description:        A description of the tsv file name, this is defined in the lLeapp plugin for each tsv file.
+        
+    ArtifactName:
+        artifactname:       The artifact that is to be created for the data in the tsv file.
+        comment:            This will be the data that will be added to the TSK_COMMENT attribute for each artifact.  If the artifact 
+                            does not need/require a comment then make the value null, a null comment will be ignored.
+                            
+    AttributeName:
+        attributeName:      The TSK attribute that the data corresponds to in the TSV file.  If the data has no corresponding TSK attribute then
+                            make the value null, this will make sure the data in this column is ignored.
+        columnName:         This is the column name that is defined in the tsv file and what the attributeName corresponds to.
+        required:           whether the attribute is required or not (yes or no)
+
+
+    -->
+<LLEAPP_Files_To_Process>
+
+    <FileName filename="bash_history.tsv" description="User Bash History">
+        <ArtifactName artifactname="LLEAPP_USER_BASH_HISTORY" comment="User Bash History">
+            <AttributeName attributename="TSK_USER_NAME" columnName="user_name" required="yes" />
+            <AttributeName attributename="LLEAPP_CMD_LINE" columnName="command" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="btmp History.tsv" description="Failed Login Attempts">
+        <ArtifactName artifactname="LLEAPP_FAILED_LOGIN_ATTEMPTS" comment="Failed Login Attempts">
+            <AttributeName attributename="TSK_USER_NAME" columnName="user" required="yes" />
+            <AttributeName attributename="LLEAPP_TERMINAL" columnName="terminal" required="yes" />
+            <AttributeName attributename="TSK_HOST" columnName="host" required="yes" />
+            <AttributeName attributename="TSK_DATETIME" columnName="timestamp" required="yes" />
+            <AttributeName attributename="null" columnName="date_removed_epoch" required="no" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome History.tsv" description="Chrome History">
+        <ArtifactName artifactname="TSK_WEB_HISTORY" comment="Chrome History">
+            <AttributeName attributename="TSK_DATETIME_ACCESSED" columnName="Last Visit Time" required="yes"/>
+            <AttributeName attributename="TSK_URL" columnName="URL" required="yes"/>
+            <AttributeName attributename="TSK_TITLE" columnName="Title" required="yes"/>
+            <AttributeName attributename="null" columnName="Visit Count" required="no"/>
+            <AttributeName attributename="null" columnName="Hidden" required="no"/>
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome autofill.tsv" description="Chrome Autofill">
+        <ArtifactName artifactname="TSK_WEB_FORM_AUTOFILL" comment="Chrome AUtofill">
+            <AttributeName attributename="TSK_DATETIME_ACCESSED" columnName="date created" required="yes" />
+            <AttributeName attributename="LLEAPP_FIELD" columnName="field" required="yes" />
+            <AttributeName attributename="TSK_VALUE" columnName="Value" required="yes" />
+            <AttributeName attributename="LLEAPP_DATE_LAST_USED" columnName="date last used" required="yes" />
+            <AttributeName attributename="TSK_COUNT" columnName="count" required="yes" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome Bookmarks.tsv" description="Chrome Bookmarks">
+        <ArtifactName artifactname="TSK_WEB_BOOKMARK" comment="Chrome Bookmarks">
+            <AttributeName attributename="TSK_DATETIME_CREATED" columnName="Added Date" required="yes" />
+            <AttributeName attributename="TSK_URL" columnName="URL" required="yes" />
+            <AttributeName attributename="TSK_TITLE" columnName="Name" required="yes" />
+            <AttributeName attributename="null" columnName="Parent" required="no" />
+            <AttributeName attributename="null" columnName="Type" required="no" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome cookies.tsv" description="Chrome Cookies">
+        <ArtifactName artifactname="TSK_WEB_COOKIE" comment="Chrome Cookies">
+            <AttributeName attributename="TSK_DATETIME_ACCESSED" columnName="Last Access Date" required="yes" />
+            <AttributeName attributename="TSK_URL" columnName="Host" required="yes" />
+            <AttributeName attributename="TSK_NAME" columnName="Name" required="yes" />
+            <AttributeName attributename="TSK_VALUE" columnName="Value" required="yes" />
+            <AttributeName attributename="TSK_DATETIME_CREATED" columnName="Created Date" required="yes" />
+            <AttributeName attributename="TSK_DATETIME_END" columnName="Expiration Date" required="yes" />
+            <AttributeName attributename="null" columnName="Path" required="no" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome downloads.tsv" description="Chrome Downloads">
+        <ArtifactName artifactname="TSK_WEB_DOWNLOAD" comment="Chrome Downloads">
+            <AttributeName attributename="TSK_DATETIME_START" columnName="Start Time" required="yes" />
+            <AttributeName attributename="TSK_DATETIME_END" columnName="End Time" required="yes" />
+            <AttributeName attributename="LLEAPP_DATE_LAST_USED" columnName="Last Access Time" required="yes" />
+            <AttributeName attributename="TSK_URL" columnName="URL" required="yes" />
+            <AttributeName attributename="TSK_PATH" columnName="Target Path" required="yes" />
+            <AttributeName attributename="LLEAPP_STATE" columnName="State" required="yes" />
+            <AttributeName attributename="LLEAPP_OPENED" columnName="Opened?" required="yes" />
+            <AttributeName attributename="TSK_BYTES_RECEIVED" columnName="Received Bytes" required="yes" />
+            <AttributeName attributename="LLEAPP_TOTAL_BYTES" columnName="Total Bytes" required="yes" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome login data.tsv" description="Chrome Login Data">
+        <ArtifactName artifactname="TSK_SERVICE_ACCOUNT" comment="Chrome Login">
+            <AttributeName attributename="TSK_DATETIME_CREATED" columnName="Created Time" required="yes" />
+            <AttributeName attributename="TSK_USER_ID" columnName="Username" required="yes" />
+            <AttributeName attributename="TSK_PASSWORD" columnName="Password" required="yes" />
+            <AttributeName attributename="TSK_URL" columnName="Origin URL" required="yes" />
+            <AttributeName attributename="null" columnName="Blacklisted by User" required="no" />
+            <AttributeName attributename="null" columnName="Browser Name" required="no" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome Media History - Origins.tsv" description="Chrome Media History">
+        <ArtifactName artifactname="LLEAPP_MEDIA_HISTORY" comment="Chrome Media History">
+            <AttributeName attributename="LLEAPP_LAST_UPDATED" columnName="Last Updated" required="yes" />
+            <AttributeName attributename="TSK_ID" columnName="ID" required="yes" />
+            <AttributeName attributename="LLEAPP_ORIGIN" columnName="Origin" required="yes" />
+            <AttributeName attributename="TSK_URL" columnName="Origin URL" required="yes" />
+            <AttributeName attributename="LEAPP_AGGREGATE_WATCHTIME" columnName="Aggregate Watchtime" required="yes" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome Network Action Predictor.tsv" description="Chrome Network Action Predictor">
+        <ArtifactName artifactname="LLEAPP_NETWORK_ACTION_PREDICTOR" comment="Chrome Network Action Predictor">
+            <AttributeName attributename="TSK_TEXT" columnName="User Text" required="yes" />
+            <AttributeName attributename="TSK_URL" columnName="URL" required="yes" />
+            <AttributeName attributename="LLEAPP_NUMBER_OF_HITS" columnName="Number of Hits" required="yes" />
+            <AttributeName attributename="LLEAPP_NUMBER_OF_MISSES" columnName="Number of Misses" required="yes" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome offline pages.tsv" description="Chrome Offline Pages">
+        <ArtifactName artifactname="TSK_WEB_HISTORY" comment="Chrome Offline Pages">
+            <AttributeName attributename="TSK_DATETIME_CREATED" columnName="Creation Time" required="yes" />
+            <AttributeName attributename="TSK_DATETIME_ACCESSED" columnName="Last Access Time" required="yes" />
+            <AttributeName attributename="TSK_URL" columnName="Online URL" required="yes" />
+            <AttributeName attributename="null" columnName="File Path" required="no" />
+            <AttributeName attributename="TSK_TITLE" columnName="Title" required="yes" />
+            <AttributeName attributename="null" columnName="Access Count" required="no" />
+            <AttributeName attributename="null" columnName="File Size" required="no" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome Omnibox.tsv" description="Chrome Omnibox">
+        <ArtifactName artifactname="LLEAPP_OMNIBOX" comment="Chrome Omnibox">
+            <AttributeName attributename="TSK_DATETIME_ACCESSED" columnName="Last Access Timestamp" required="yes" />
+            <AttributeName attributename="TSK_TEXT" columnName="Text" required="yes" />
+            <AttributeName attributename="LLEAPP_FILL_INTO_EDIT" columnName="Fill Into Edit" required="yes" />
+            <AttributeName attributename="TSK_URL" columnName="URL" required="yes" />
+            <AttributeName attributename="LLEAPP_CONTENTS" columnName="Contents" required="yes" />
+            <AttributeName attributename="TSK_DESCRIPTION" columnName="Description" required="yes" />
+            <AttributeName attributename="TSK_KEYWORD" columnName="Keyword" required="yes" />
+            <AttributeName attributename="LLEAPP_NUMBER_OF_HITS" columnName="Number of Hits" required="yes" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome keyword search terms.tsv" description="Chrome Keyword Search Terms">
+        <ArtifactName artifactname="TSK_WEB_SEARCH_QUERY" comment="Chrome Keyword Search Terms">
+            <AttributeName attributename="TSK_DATETIME_ACCESSED" columnName="Last Visit Time" required="yes"/>
+            <AttributeName attributename="TSK_TEXT" columnName="Term" required="yes"/>
+            <AttributeName attributename="TSK_DOMAIN" columnName="URL" required="yes"/>
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome Synced Users.tsv" description="Chrome Synced Users">
+        <ArtifactName artifactname="LLEAPP_SYNCED_USERS" comment="Chrome Synced Users">
+            <AttributeName attributename="TSK_URL" columnName="url origin" required="yes"/>
+            <AttributeName attributename="TSK_DOMAIN" columnName="url realm" required="yes"/>
+            <AttributeName attributename="TSK_USER_ID" columnName="username" required="yes"/>
+            <AttributeName attributename="TSK_USER_NAME" columnName="user_name" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome top sites.tsv" description="Chrome Top Sites">
+        <ArtifactName artifactname="TSK_WEB_HISTORY" comment="Chrome Top Sites">
+            <AttributeName attributename="TSK_URL" columnName="URL" required="yes" />
+            <AttributeName attributename="null" columnName="Rank" required="no" />
+            <AttributeName attributename="TSK_TITLE" columnName="Title" required="yes" />
+            <AttributeName attributename="null" columnName="Redirects" required="no" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Chrome search terms.tsv" description="Chrome Search Terms">
+        <ArtifactName artifactname="TSK_WEB_SEARCH_QUERY" comment="Chrome Search Terms">
+            <AttributeName attributename="TSK_DATETIME_ACCESSED" columnName="Last Visit Time" required="yes"/>
+            <AttributeName attributename="TSK_TEXT" columnName="Search Term" required="yes"/>
+            <AttributeName attributename="TSK_DOMAIN" columnName="URL" required="yes"/>
+            <AttributeName attributename="TSK_TITLE" columnName="Title" required="yes"/>
+            <AttributeName attributename="TSK_COUNT" columnName="Visit Count" required="yes"/>
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="crontab.tsv" description="Crontabs">
+        <ArtifactName artifactname="LLEAPP_CRONTABS" comment="Crontabs">
+            <AttributeName attributename="LLEAPP_CMD_LINE" columnName="command" required="yes"/>
+            <AttributeName attributename="TSK_USER_ID" columnName="user" required="yes"/>
+            <AttributeName attributename="LLEAPP_MINUTE" columnName="minute" required="yes"/>
+            <AttributeName attributename="LLEAPP_HOUR" columnName="hour" required="yes"/>
+            <AttributeName attributename="LLEAPP_DAY_OF_MONTH" columnName="day_of_month" required="yes"/>
+            <AttributeName attributename="LLEAPP_MONTH_OF_YEAR" columnName="month_of_year" required="yes"/>
+            <AttributeName attributename="LLEAPP_DAY_OF_WEEK" columnName="day_of_week" required="yes"/>
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Docker Config.tsv" description="Docker Config">
+        <ArtifactName artifactname="LLEAPP_DOCKER_CONFIG" comment="Docker Config">
+            <AttributeName attributename="LLEAPP_IMAGE_NAME" columnName="image_name" required="yes"/>
+            <AttributeName attributename="LLEAPP_CONTAINER_ID" columnName="container_id" required="yes"/>
+            <AttributeName attributename="LLEAPP_IMAGE_ID" columnName="image_id" required="yes"/>
+            <AttributeName attributename="LLEAPP_OS" columnName="os" required="yes"/>
+            <AttributeName attributename="LLEAPP_WORKING_DIRECTORY" columnName="working_dir" required="yes"/>
+            <AttributeName attributename="LLEAPP_ENTRY_POINT" columnName="entry_point" required="yes"/>
+            <AttributeName attributename="LLEAPP_CREATE_DATE_STRING" columnName="created_date" required="yes"/>
+            <AttributeName attributename="LLEAPP_START_DATE_STRING" columnName="start_date" required="yes" />
+            <AttributeName attributename="LLEAPP_END_DATE_STRING" columnName="finished_date" required="yes" />
+            <AttributeName attributename="LLEAPP_RUNNING" columnName="running" required="yes" />
+            <AttributeName attributename="LLEAPP_MOUNT_ID" columnName="mount_id" required="yes" />
+            <AttributeName attributename="LLEAPP_UPPER_ID" columnName="upper_id" required="yes" />
+            <AttributeName attributename="LLEAPP_LOG_PATH" columnName="log_path" required="yes" />
+            <AttributeName attributename="LLEAPP_EXPOSED_PORTS" columnName="exposed_ports" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Firefox History.tsv" description="Firefox History">
+        <ArtifactName artifactname="TSK_WEB_HISTORY" comment="Firefox History">
+            <AttributeName attributename="null" columnName="Visit Date" required="yes"/>
+            <AttributeName attributename="TSK_URL" columnName="URL" required="yes"/>
+            <AttributeName attributename="TSK_TITLE" columnName="Title" required="yes"/>
+            <AttributeName attributename="null" columnName="Visit Count" required="no"/>
+            <AttributeName attributename="null" columnName="From Visit" required="no"/>
+            <AttributeName attributename="null" columnName="Hidden" required="no"/>
+            <AttributeName attributename="null" columnName="Visit Type" required="no"/>
+            <AttributeName attributename="null" columnName="Hidden" required="no"/>
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+     <FileName filename="Firefox cookies.tsv" description="Firefox Cookies">
+        <ArtifactName artifactname="TSK_WEB_COOKIE" comment="Firefox Cookies">
+            <AttributeName attributename="TSK_NAME" columnName="Name" required="yes" />
+            <AttributeName attributename="TSK_VALUE" columnName="Value" required="yes" />
+            <AttributeName attributename="TSK_HOST" columnName="host" required="yes" />
+            <AttributeName attributename="TSK_PATH" columnName="path" required="yes" />
+            <AttributeName attributename="null" columnName="expiration" required="no" />
+            <AttributeName attributename="null" columnName="last_accessed" required="no" />
+            <AttributeName attributename="null" columnName="creation_time" required="no" />
+            <AttributeName attributename="null" columnName="is_secure" required="no" />
+            <AttributeName attributename="null" columnName="is_http_only" required="no" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>  
+
+    <FileName filename="Firefox downloads.tsv" description="Firefox Downloads">
+        <ArtifactName artifactname="TSK_WEB_DOWNLOAD" comment="Firefox Downloads">
+            <AttributeName attributename="TSK_URL" columnName="url" required="yes" />
+            <AttributeName attributename="LLEAPP_FILE_NAME" columnName="file_name" required="yes" />
+            <AttributeName attributename="TSK_PATH" columnName="destination_directory" required="yes" />
+            <AttributeName attributename="null" columnName="created_at" required="no" />
+            <AttributeName attributename="LLEAPP_TOTAL_BYTES" columnName="content_length" required="yes" />
+            <AttributeName attributename="LLEAPP_CONTENT_TYPE" columnName="content_type" required="yes" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="file_system_table.tsv" description="File System Table">
+        <ArtifactName artifactname="LLEAPP_FILE_SYSTEM_TABLE" comment="File System Table">
+            <AttributeName attributename="TSK_DEVICE_NAME" columnName="device_name" required="yes" />
+            <AttributeName attributename="LLEAPP_MOUNT_POINT" columnName="mount_point" required="yes" />
+            <AttributeName attributename="LLEAPP_FILE_SYSTEM_TYPE" columnName="filesystem_type" required="yes" />
+            <AttributeName attributename="LLEAPP_MOUNT_OPTIONS" columnName="mounting_options" required="yes" />
+            <AttributeName attributename="LLEAPP_MOUNT_FREQ" columnName="mount_freq" required="yes" />
+            <AttributeName attributename="LLEAPP_MOUNT_PASSNO" columnName="mnt_passno" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="group.tsv" description="Group">
+        <ArtifactName artifactname="LLEAPP_GROUP" comment="Group">
+            <AttributeName attributename="LLEAPP_GROUP_NAME" columnName="group_name" required="yes" />
+            <AttributeName attributename="TSK_PASSWORD" columnName="passwd" required="yes" />
+            <AttributeName attributename="LLEAPP_GID" columnName="gid" required="yes" />
+            <AttributeName attributename="LLEAPP_GROUP_USERS" columnName="list_of_users" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>   
+
+    <FileName filename="hostname.tsv" description="Hostname">
+        <ArtifactName artifactname="LLEAPP_HOSTNAME" comment="Hostname">
+            <AttributeName attributename="TSK_HOST" columnName="hostname" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="mdadm_arrays.tsv" description="Mdadm Arrays">
+        <ArtifactName artifactname="LLEAPP_MDADM_ARRAYS" comment="Mdadm Arrays">
+            <AttributeName attributename="LLEAPP_ARRAY_NAME" columnName="array" required="yes" />
+            <AttributeName attributename="TSK_DEVICE_NAME" columnName="device_name" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="mounted_devices.tsv" description="Mounted Devices Table">
+        <ArtifactName artifactname="LLEAPP_MOUNTED_DEVICES_TABLE" comment="Mounted Devices Table">
+            <AttributeName attributename="TSK_DEVICE_NAME" columnName="device_name" required="yes" />
+            <AttributeName attributename="LLEAPP_MOUNT_POINT" columnName="mount_point" required="yes" />
+            <AttributeName attributename="LLEAPP_FILE_SYSTEM_TYPE" columnName="filesystem_type" required="yes" />
+            <AttributeName attributename="LLEAPP_MOUNT_OPTIONS" columnName="mounting_options" required="yes" />
+            <AttributeName attributename="LLEAPP_MOUNT_FREQ" columnName="mount_freq" required="yes" />
+            <AttributeName attributename="LLEAPP_MOUNT_PASSNO" columnName="mnt_passno" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="osname.tsv" description="OS Info">
+        <ArtifactName artifactname="TSK_OS_INFO" comment="OS Info">
+            <AttributeName attributename="TSK_NAME" columnName="name" required="yes" />
+            <AttributeName attributename="TSK_VALUE" columnName="value" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="recent_Documents.tsv" description="LibraOffice Recent Files">
+        <ArtifactName artifactname="TSK_RECENT_OBJ" comment="LibraOffice Recent Files">
+            <AttributeName attributename="TSK_USER_NAME" columnName="owner" required="yes" />
+            <AttributeName attributename="TSK_PATH" columnName="document_name" required="yes" />
+            <AttributeName attributename="TSK_PROG_NAME" columnName="application" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="shadow.tsv" description="Shadow">
+        <ArtifactName artifactname="LLEAPP_SHADOW" comment="Shadow">
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="LLEAPP_PASSWD_ALGORITHM" columnName="passwd_algorithm" required="yes" />
+            <AttributeName attributename="LLEAPP_PASSWD_SALT" columnName="passwd_salt" required="yes" />
+            <AttributeName attributename="LLEAPP_PASSWD_HASHED" columnName="passwd_hashed" required="yes" />
+            <AttributeName attributename="null" columnName="last_change_epoch" required="yes" />
+            <AttributeName attributename="null" columnName="minimum_passed_change" required="yes" />
+            <AttributeName attributename="null" columnName="maximum_passed_change" required="yes" />
+            <AttributeName attributename="null" columnName="warn" required="yes" />
+            <AttributeName attributename="null" columnName="inactive" required="yes" />
+            <AttributeName attributename="null" columnName="expiration_date_epoch" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="passwd.tsv" description="Passwd User File">
+        <ArtifactName artifactname="LLEAPP_USER_INFO" comment="Passwd User File">
+            <AttributeName attributename="TSK_USER_NAME" columnName="username" required="yes" />
+            <AttributeName attributename="TSK_PASSWORD" columnName="passwd" required="yes" />
+            <AttributeName attributename="LLEAPP_UID" columnName="uid" required="yes" />
+            <AttributeName attributename="LLEAPP_GID" columnName="gid" required="yes" />
+            <AttributeName attributename="LLEAPP_GECOS" columnName="gecos" required="yes" />
+            <AttributeName attributename="LLEAPP_HOME_DIRECTORY" columnName="home_directory" required="yes" />
+            <AttributeName attributename="LLEAPP_LOGIN_SHELL" columnName="login_shell" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="snap_package.tsv" description="Snap Packages">
+        <ArtifactName artifactname="TSK_INSTALLED_PROG" comment="Snap Packages">
+            <AttributeName attributename="TSK_PROG_NAME" columnName="package_name" required="yes" />
+            <AttributeName attributename="TSK_VERSION" columnName="version" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Timezone.tsv" description="Timezone">
+        <ArtifactName artifactname="LLEAPP_TIMEZONE" comment="Timezone">
+            <AttributeName attributename="LLEAPP_TIMEZONE_NAME" columnName="timezone" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="Trash.tsv" description="Trash">
+        <ArtifactName artifactname="LLEAPP_TRASH" comment="Trash">
+            <AttributeName attributename="TSK_NAME" columnName="file_name" required="yes" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="owner" required="yes" />
+            <AttributeName attributename="TSK_PATH" columnName="original_path" required="yes" />
+            <AttributeName attributename="LLEAPP_DELETE_DATE" columnName="delete_date" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="vim_edited_files.tsv" description="VIM Edited Files">
+        <ArtifactName artifactname="TSK_RECENT_OBJ" comment="Vim Edited Files">
+            <AttributeName attributename="TSK_USER_NAME" columnName="owner" required="yes" />
+            <AttributeName attributename="TSK_PATH" columnName="document_name" required="yes" />
+            <AttributeName attributename="TSK_PROG_NAME" columnName="application" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="wtmp History.tsv" description="Record of Each Login/logout">
+        <ArtifactName artifactname="LLEAPP_LOGIN_LOGOUT" comment="Record of Each Login/logout">
+            <AttributeName attributename="TSK_USER_NAME" columnName="user" required="yes" />
+            <AttributeName attributename="LLEAPP_TERMINAL" columnName="terminal" required="yes" />
+            <AttributeName attributename="TSK_HOST" columnName="host" required="yes" />
+            <AttributeName attributename="TSK_DATETIME" columnName="timestamp" required="yes" />
+            <AttributeName attributename="null" columnName="date_removed_epoch" required="no" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+</LLEAPP_Files_To_Process>
+

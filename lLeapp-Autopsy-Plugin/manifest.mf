@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.sleuthkit.autopsy.modules.lleappanalyzer
+OpenIDE-Module-Localizing-Bundle: org/sleuthkit/autopsy/modules/lleappanalyzer/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+

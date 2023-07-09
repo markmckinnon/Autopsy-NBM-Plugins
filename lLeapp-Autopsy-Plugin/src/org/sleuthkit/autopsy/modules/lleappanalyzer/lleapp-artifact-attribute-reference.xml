@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <!---
+    This file contains the parameters for how to map lLeapp plugin output to attributes inside Autopsy for the lleapp Analyser module.
+
+    Each FileName node corresponds to a tab seperated values (tsv) file that is produced from lLeapp.
+
+    A FileName will have an associated TSK artifact assigned to it.
+
+    Each TSK artifact may have multiple attributes that correspond to the columns of the output from the lLeapp program tsv file.
+
+
+    FileName:
+        filename:           The lLeapp TSV file that you want to process. 
+        description:        A description of the tsv file name, this is defined in the lLeapp plugin for each tsv file.
+        
+    ArtifactName:
+        artifactname:       The artifact that is to be created for the data in the tsv file.
+        comment:            This will be the data that will be added to the TSK_COMMENT attribute for each artifact.  If the artifact 
+                            does not need/require a comment then make the value null, a null comment will be ignored.
+                            
+    AttributeName:
+        attributeName:      The TSK attribute that the data corresponds to in the TSV file.  If the data has no corresponding TSK attribute then
+                            make the value null, this will make sure the data in this column is ignored.
+        columnName:         This is the column name that is defined in the tsv file and what the attributeName corresponds to.
+        required:           whether the attribute is required or not (yes or no)
+
+
+    -->
+<lLeap_Files_To_Process>
+
+    <FileName filename="apache_access_log History.tsv" description="Apache Access Log History">
+        <ArtifactName artifactname="LLEAPP_APACHE_LOG_HISTORY" comment="Apache Access Log History">
+            <AttributeName attributename="TSK_DATETIME" columnName="timestamp" required="yes" />
+            <AttributeName attributename="LLEAPP_REMOTE_IP_ADDRESS" columnName="remote_ip" required="yes" />
+            <AttributeName attributename="LLEAPP_REQUEST" columnName="request" required="yes" />
+            <AttributeName attributename="LLEAPP_STATUS" columnName="status" required="yes" />
+            <AttributeName attributename="TSK_BYTES_RECEIVED" columnName="bytes_out" required="yes" />
+            <AttributeName attributename="TSK_REFERRER" columnName="referer" required="yes" />
+            <AttributeName attributename="LLEAPP_USER_AGENT" columnName="user_agent" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />
+        </ArtifactName>
+    </FileName>
+
+    <FileName filename="apache_IP_bytes History.tsv" description="Apache IP Bytes History">
+        <ArtifactName artifactname="LLEAPP_IP_BYTES_HISTORY" comment="Apache IP Bytes History">
+            <AttributeName attributename="TSK_IP_ADDRESS" columnName="ip_address" required="yes" />
+            <AttributeName attributename="TSK_BYTES_RECEIVED" columnName="num_of_bytes" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />        </ArtifactName>
+    </FileName>
+
+    <FileName filename="apache_IP_page_accesses History.tsv" description="Apache IP Page Accesses History">
+        <ArtifactName artifactname="LLEAPP_IP_PAGE_ACCESSES_HISTORY" comment="Apache IP Page Accesses History">
+            <AttributeName attributename="TSK_IP_ADDRESS" columnName="ip_address" required="yes" />
+            <AttributeName attributename="LLEAPP_NUM_RESOURCES_ACCESSED" columnName="num_of_resources_accessed" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />        </ArtifactName>
+    </FileName>
+
+    <FileName filename="apache_method_bytes History.tsv" description="Apache Method Bytes History">
+        <ArtifactName artifactname="LLEAPP_METHOD_BYTES_HISTORY" comment="Apache Method Bytes History">
+            <AttributeName attributename="LLEAPP_REQUEST" columnName="request_method" required="yes" />
+            <AttributeName attributename="LLEAPP_BYTES" columnName="num_of_bytes" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />        </ArtifactName>
+    </FileName>
+
+    <FileName filename="apache_method_count History.tsv" description="Apache Method Count History">
+        <ArtifactName artifactname="LLEAPP_METHOD_COUNT_HISTORY" comment="Apache Method Count History">
+            <AttributeName attributename="LLEAPP_REQUEST" columnName="request_method" required="yes" />
+            <AttributeName attributename="TSK_COUNT" columnName="num_of_accesses" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />        </ArtifactName>
+    </FileName>
+
+    <FileName filename="apache_uri_bytes History.tsv" description="Apache Url Bytes History">
+        <ArtifactName artifactname="LLEAPP_URL_BYTES_HISTORY" comment="Apache Url Bytes History">
+            <AttributeName attributename="TSK_URL" columnName="uri" required="yes" />
+            <AttributeName attributename="LLEAPP_BYTES" columnName="num_of_bytes" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />        </ArtifactName>
+    </FileName>
+
+    <FileName filename="apt_history_log History.tsv" description="Apt Log History">
+        <ArtifactName artifactname="LLEAPP_APT_HISTORY_LOG" comment="Apt Log History">
+            <AttributeName attributename="TSK_DATETIME_START" columnName="start_date" required="yes" />
+            <AttributeName attributename="LLEAPP_CMD_LINE" columnName="commandline" required="yes" />
+            <AttributeName attributename="TSK_ACTIVITY_TYPE" columnName="type" required="yes" />
+            <AttributeName attributename="TSK_PROG_NAME" columnName="programs" required="yes" />
+            <AttributeName attributename="TSK_DATETIME_END" columnName="end_date" required="yes" />
+            <AttributeName attributename="null" columnName="start_date_epoch" required="no" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />        </ArtifactName>
+    </FileName>
+    
+    <FileName filename="apt_programs_installed_log History.tsv" description="Apt Programs Installed">
+        <ArtifactName artifactname="TSK_INSTALLED_PROG" comment="Apt Programs Installed">
+            <AttributeName attributename="TSK_PROG_NAME" columnName="installed_program" required="yes" />
+            <AttributeName attributename="TSK_DATETIME" columnName="date_installed" required="yes" />
+            <AttributeName attributename="null" columnName="date_installed_epoch" required="no" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />        </ArtifactName>
+    </FileName>
+
+    <FileName filename="apt_programs_removed_log History.tsv" description="Apt Programs Removed">
+        <ArtifactName artifactname="LLEAPP_PROGRAMS_REMOVED" comment="Apt Programs Removed">
+            <AttributeName attributename="TSK_PROG_NAME" columnName="removed_program" required="yes" />
+            <AttributeName attributename="TSK_DATETIME" columnName="date_removed" required="yes" />
+            <AttributeName attributename="null" columnName="date_removed_epoch" required="no" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />        </ArtifactName>
+    </FileName>
+
+    <FileName filename="auth_log Failed Logins History.tsv" description="Auth Log Failed Logins">
+        <ArtifactName artifactname="LLEAPP_FAILED_LOGINS" comment="Auth Log Failed Logins">
+            <AttributeName attributename="LLEAPP_AUTH_TIMESTAMP" columnName="timestamp" required="yes" />
+            <AttributeName attributename="TSK_HOST" columnName="host" required="yes" />
+            <AttributeName attributename="LLEAPP_PROCESS" columnName="process" required="yes" />
+            <AttributeName attributename="LLEAPP_MESSAGE" columnName="message" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />        </ArtifactName>
+    </FileName>
+    
+    <FileName filename="auth_log History.tsv" description="Auth Log History">
+        <ArtifactName artifactname="LLEAPP_LOGIN_HISTORY" comment="Auth Log History">
+            <AttributeName attributename="LLEAPP_AUTH_TIMESTAMP" columnName="timestamp" required="yes" />
+            <AttributeName attributename="TSK_HOST" columnName="host" required="yes" />
+            <AttributeName attributename="LLEAPP_PROCESS" columnName="process" required="yes" />
+            <AttributeName attributename="LLEAPP_MESSAGE" columnName="message" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />        </ArtifactName>
+    </FileName>
+    
+    <FileName filename="auth_log sudo History.tsv" description="Auth Log Sudo History">
+        <ArtifactName artifactname="LLEAPP_SUDO_HISTORY" comment="Auth Log Sudo History">
+            <AttributeName attributename="LLEAPP_AUTH_TIMESTAMP" columnName="timestamp" required="yes" />
+            <AttributeName attributename="TSK_HOST" columnName="host" required="yes" />
+            <AttributeName attributename="TSK_USER_NAME" columnName="user" required="yes" />
+            <AttributeName attributename="LLEAPP_MESSAGE" columnName="message" required="yes" />
+            <AttributeName attributename="LLEAPP_TERMINAL" columnName="terminal" required="yes" />
+            <AttributeName attributename="LLEAPP_WORKING_DIRECTORY" columnName="print_working_directory" required="yes" />
+            <AttributeName attributename="LLEAPP_RUN_AS" columnName="run_as" required="yes" />
+            <AttributeName attributename="LLEAPP_CMD_LINE" columnName="command" required="yes" />
+            <AttributeName attributename="TSK_TEXT_FILE" columnName="sourcefile" required="yes" />        </ArtifactName>
+    </FileName>
+    
+</lLeap_Files_To_Process>
+
